@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Admin Header -->
+<section style="background:#1a1a1a; padding:40px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <p style="color:#c8a96e; font-size:12px; letter-spacing:3px; margin:0;">OFFICIAL COACH FACTORY</p>
+                <h1 style="color:white; letter-spacing:4px; font-size:28px; margin:0;">
+                    {% if product %}EDIT PRODUCT{% else %}ADD PRODUCT{% endif %}
+                </h1>
+            </div>
+            <a href="/admin" class="btn"
+               style="border:1px solid #ccc; color:#ccc; letter-spacing:2px; font-size:12px;">
+                <i class="fas fa-arrow-left me-2"></i>BACK TO DASHBOARD
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Form -->
+<section style="padding:60px 0; background:#f0ede8; min-height:70vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 5px 30px rgba(0,0,0,0.08);">
+                    <div class="card-body p-5">
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                            {% for category, message in messages %}
+                              <div class="alert alert-{{ category }} text-center mb-4"
+                                   style="border-radius:0; font-size:13px;">{{ message }}</div>
+                            {% endfor %}
+                          {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" enctype="multipart/form-data">
+
+                            <!-- Product Name -->
+                            <div class="mb-4">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    PRODUCT NAME
+                                </label>
+                                <input type="text" name="name" class="form-control"
+                                       style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                       value="{{ product.name if product else '' }}"
+                                       placeholder="e.g. Coach Tabby Bag"
+                                       required>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="mb-4">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    PRICE (USD)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"
+                                          style="border-radius:0; background:#1a1a1a;
+                                                 color:white; border:none;">$</span>
+                                    <input type="number" name="price" class="form-control"
+                                           style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                           value="{{ product.price if product else '' }}"
+                                           placeholder="0.00" step="0.01" min="0"
+                                           required>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="mb-4">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    CATEGORY
+                                </label>
+                                <select name="category" class="form-select"
+                                        style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                        required>
+                                    <option value="">-- SELECT CATEGORY --</option>
+                                    <option value="Shoulder Bags"
+                                        {% if product and product.category == 'Shoulder Bags' %}selected{% endif %}>
+                                        Shoulder Bags
+                                    </option>
+                                    <option value="Totes"
+                                        {% if product and product.category == 'Totes' %}selected{% endif %}>
+                                        Totes
+                                    </option>
+                                    <option value="Crossbody"
+                                        {% if product and product.category == 'Crossbody' %}selected{% endif %}>
+                                        Crossbody
+                                    </option>
+                                    <option value="Mini Bags"
+                                        {% if product and product.category == 'Mini Bags' %}selected{% endif %}>
+                                        Mini Bags
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    DESCRIPTION
+                                </label>
+                                <textarea name="description" class="form-control"
+                                          style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                          rows="4"
+                                          placeholder="Describe the bag..."
+                                          required>{{ product.description if product else '' }}</textarea>
+                            </div>
+
+                            <!-- Multiple Image Upload -->
+                            <div class="mb-4">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    PRODUCT IMAGES
+                                </label>
+
+                                {% if product and product.get_images() %}
+                                <div class="mb-3">
+                                    <p style="font-size:11px; color:#999; letter-spacing:1px;">
+                                        CURRENT IMAGES
+                                    </p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for img in product.get_images() %}
+                                        <img src="{{ img }}" alt="Product Image"
+                                             style="height:80px; width:80px; object-fit:cover;
+                                                    border:1px solid #ddd;">
+                                        {% endfor %}
+                                    </div>
+                                    <small style="font-size:11px; color:#999;">
+                                        Upload new images to add to existing ones
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <input type="file" name="images" class="form-control"
+                                       style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                       accept="image/*"
+                                       multiple>
+                                <small style="font-size:11px; color:#999; letter-spacing:1px;">
+                                    Select multiple images — hold Ctrl (Windows) to pick more than one
+                                </small>
+                            </div>
+
+                            <!-- Submit -->
+                            <button type="submit" class="btn btn-coach w-100"
+                                    style="padding:15px; letter-spacing:3px; font-size:13px;">
+                                {% if product %}
+                                    <i class="fas fa-save me-2"></i>UPDATE PRODUCT
+                                {% else %}
+                                    <i class="fas fa-plus me-2"></i>ADD PRODUCT
+                                {% endif %}
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
