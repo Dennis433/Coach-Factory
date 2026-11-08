@@ -5,7 +5,7 @@
 <!-- Page Header -->
 <section style="background:#1a1a1a; padding:50px 0; text-align:center;">
     <div class="container">
-        <p class="section-title" style="color:#c8a96e;">OFFICIAL COACH FACTORY</p>
+        <p class="section-title" style="color:#c8a96e;">COACH FACTORY</p>
         <h1 style="color:white; letter-spacing:4px; font-size:36px;">OUR COLLECTION</h1>
     </div>
 </section>
@@ -34,42 +34,46 @@
             <div class="col-md-4 col-sm-6">
                 <div class="card product-card h-100">
 
-                    <!-- Product Image -->
-                    <div style="height:280px; background:#f0ede8; overflow:hidden;">
+                    <!-- Main Product Image -->
+                    <div class="product-img-wrap">
                         {% if product.first_image() %}
-                        <img src="{{ product.first_image() }}" alt="{{ product.name }}"
-                             style="width:100%; height:280px; object-fit:cover;">
+                        <img src="{{ product.first_image() }}"
+                             alt="{{ product.name }}"
+                             id="main-img-{{ product.id }}">
                         {% else %}
-                        <div class="d-flex align-items-center justify-content-center"
-                             style="height:280px;">
-                            <i class="fas fa-shopping-bag" style="font-size:80px; color:#ccc;"></i>
+                        <div class="product-img-placeholder">
+                            <i class="fas fa-shopping-bag"
+                               style="font-size:80px; color:#ccc;"></i>
                         </div>
                         {% endif %}
                     </div>
 
                     <div class="card-body p-4">
                         <p class="product-category">{{ product.category }}</p>
-                        <h5 class="card-title" style="font-size:18px;">{{ product.name }}</h5>
-                        <p class="card-text text-muted" style="font-size:14px; line-height:1.6;">
+                        <h5 class="card-title" style="font-size:18px;">
+                            {{ product.name }}
+                        </h5>
+                        <p class="card-text text-muted"
+                           style="font-size:14px; line-height:1.6;">
                             {{ product.description }}
                         </p>
 
-                        <!-- Multiple Images Thumbnails -->
+                        <!-- Multiple Image Thumbnails -->
                         {% if product.get_images()|length > 1 %}
-                        <div class="d-flex gap-1 mb-3">
+                        <div class="d-flex gap-1 mb-3 flex-wrap">
                             {% for img in product.get_images() %}
-                            <img src="{{ img }}" alt="{{ product.name }}"
-                                 style="width:45px; height:45px; object-fit:cover;
-                                        border:2px solid transparent; cursor:pointer;
-                                        border-radius:2px;"
-                                 onmouseover="document.getElementById('main-img-{{ product.id }}').src='{{ img }}'"
-                                 class="thumbnail-img">
+                            <img src="{{ img }}"
+                                 alt="{{ product.name }}"
+                                 class="thumbnail-img {% if loop.first %}active{% endif %}"
+                                 onclick="switchImage('{{ product.id }}', '{{ img }}', this)">
                             {% endfor %}
                         </div>
                         {% endif %}
 
                         <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                            <span class="product-price">
+                                ${{ "%.2f"|format(product.price) }}
+                            </span>
                             <a href="/add_to_cart/{{ product.id }}" class="btn btn-coach">
                                 <i class="fas fa-shopping-bag me-1"></i> ADD TO BAG
                             </a>
@@ -89,8 +93,13 @@
     </div>
 </section>
 
-<style>
-.thumbnail-img:hover { border-color: #1a1a1a !important; }
-</style>
+<script>
+function switchImage(productId, imgUrl, thumb) {
+    document.getElementById('main-img-' + productId).src = imgUrl;
+    document.querySelectorAll('#product-' + productId + ' .thumbnail-img')
+        .forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
+</script>
 
 {% endblock %}
