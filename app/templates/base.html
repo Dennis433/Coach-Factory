@@ -32,14 +32,19 @@
         .product-card { border: none; box-shadow: 0 2px 15px rgba(0,0,0,0.08);
                         transition: transform 0.3s; border-radius: 0; }
         .product-card:hover { transform: translateY(-5px); }
+
         .product-img-wrap { width: 100%; height: 300px; overflow: hidden;
                             background: #f0ede8; position: relative; }
         .product-img-wrap img { width: 100%; height: 100%;
-                                object-fit: cover; object-position: center top;
+                                object-fit: cover;
+                                object-position: center center;
                                 transition: transform 0.4s ease; }
         .product-img-wrap:hover img { transform: scale(1.05); }
+
         .product-img-placeholder { width: 100%; height: 300px; background: #f0ede8;
-                                   display: flex; align-items: center; justify-content: center; }
+                                   display: flex; align-items: center;
+                                   justify-content: center; }
+
         .product-price { color: #1a1a1a; font-size: 18px; font-weight: bold; }
         .product-category { color: #999; font-size: 12px; letter-spacing: 2px;
                             text-transform: uppercase; }
@@ -48,7 +53,8 @@
                          font-size: 14px; color: #999; margin-bottom: 10px; }
         .section-heading { font-size: 36px; color: #1a1a1a; margin-bottom: 40px; }
 
-        .footer { background-color: #1a1a1a; color: #ccc; padding: 50px 0; margin-top: 80px; }
+        .footer { background-color: #1a1a1a; color: #ccc;
+                  padding: 50px 0; margin-top: 80px; }
         .footer h6 { color: white; letter-spacing: 2px; text-transform: uppercase;
                      margin-bottom: 20px; }
         .footer a { color: #999; text-decoration: none; display: block;
@@ -73,7 +79,8 @@
             <img src="/static/images/logo.jpeg" alt="Coach Logo" class="logo-img">
             COACH FACTORY
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon" style="filter:invert(1)"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">

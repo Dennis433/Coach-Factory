@@ -24,7 +24,8 @@ def products():
     else:
         all_products = Product.query.filter_by(category=category).all()
     categories = ['All', 'Shoulder Bags', 'Totes', 'Crossbody', 'Mini Bags']
-    return render_template('products.html', products=all_products, categories=categories, active=category)
+    return render_template('products.html', products=all_products,
+                           categories=categories, active=category)
 
 @main.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
@@ -88,13 +89,16 @@ def admin_add_product():
         category = request.form.get('category')
         image_urls = []
 
-        # Handle multiple image uploads to Cloudinary
         files = request.files.getlist('images')
         for file in files:
             if file and file.filename != '':
                 upload_result = cloudinary.uploader.upload(
                     file,
-                    folder='coach_factory'
+                    folder='coach_factory',
+                    transformation=[
+                        {'width': 800, 'height': 1000,
+                         'crop': 'fill', 'gravity': 'auto'}
+                    ]
                 )
                 image_urls.append(upload_result.get('secure_url', ''))
 
@@ -132,18 +136,20 @@ def admin_edit_product(product_id):
         product.description = request.form.get('description')
         product.category = request.form.get('category')
 
-        # Handle multiple image uploads
         files = request.files.getlist('images')
         new_urls = []
         for file in files:
             if file and file.filename != '':
                 upload_result = cloudinary.uploader.upload(
                     file,
-                    folder='coach_factory'
+                    folder='coach_factory',
+                    transformation=[
+                        {'width': 800, 'height': 1000,
+                         'crop': 'fill', 'gravity': 'auto'}
+                    ]
                 )
                 new_urls.append(upload_result.get('secure_url', ''))
 
-        # Keep existing images and add new ones
         if new_urls:
             existing = product.get_images()
             all_images = existing + new_urls
