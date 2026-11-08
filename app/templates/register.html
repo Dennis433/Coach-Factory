@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section style="min-height:85vh; display:flex; align-items:center; background:#f0ede8; padding:60px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 5px 30px rgba(0,0,0,0.1);">
+                    <div class="card-body p-5">
+
+                        <div class="text-center mb-4">
+                            <img src="/static/images/logo.jpeg" alt="Coach Logo"
+                                 style="height:50px; margin-bottom:15px;">
+                            <h4 style="letter-spacing:3px; font-size:16px;">CREATE ACCOUNT</h4>
+                            <p style="font-size:12px; color:#999; letter-spacing:1px;">
+                                COACH FACTORY
+                            </p>
+                        </div>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                            {% for category, message in messages %}
+                              <div class="alert alert-{{ category }} text-center"
+                                   style="font-size:13px; border-radius:0;">
+                                  {{ message }}
+                              </div>
+                            {% endfor %}
+                          {% endif %}
+                        {% endwith %}
+
+                        <form method="POST">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                        FIRST NAME
+                                    </label>
+                                    <input type="text" name="first_name" class="form-control"
+                                           style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                           required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                        LAST NAME
+                                    </label>
+                                    <input type="text" name="last_name" class="form-control"
+                                           style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    EMAIL ADDRESS
+                                </label>
+                                <input type="email" name="email" class="form-control"
+                                       style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                       required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    PASSWORD
+                                </label>
+                                <input type="password" name="password" class="form-control"
+                                       style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                       required minlength="6">
+                                <small style="font-size:11px; color:#999;">
+                                    Minimum 6 characters
+                                </small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    CONFIRM PASSWORD
+                                </label>
+                                <input type="password" name="confirm_password" class="form-control"
+                                       style="border-radius:0; border:1px solid #ddd; padding:12px;"
+                                       required minlength="6">
+                            </div>
+
+                            <button type="submit" class="btn btn-coach w-100"
+                                    style="padding:14px; letter-spacing:3px;">
+                                CREATE ACCOUNT
+                            </button>
+
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <p style="font-size:13px; color:#999;">
+                                Already have an account?
+                                <a href="/login"
+                                   style="color:#1a1a1a; letter-spacing:1px;">
+                                    LOGIN
+                                </a>
+                            </p>
+                            <a href="/"
+                               style="font-size:12px; color:#999; letter-spacing:1px;">
+                                ← BACK TO STORE
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

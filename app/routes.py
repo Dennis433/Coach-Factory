@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
-from app.models import Product
+from flask_login import login_user, logout_user, login_required, current_user
+from app.models import Product, User, Order
 from app import db
 import cloudinary.uploader
 import os
@@ -40,7 +41,7 @@ def add_to_cart(product_id):
     cart.append(product_id)
     session['cart'] = cart
     flash('Item added to cart!', 'success')
-    return redirect(url_for('main.products'))
+    return redirect(url_for('main.cart'))
 
 @main.route('/cart')
 def cart():
@@ -57,6 +58,70 @@ def remove_from_cart(product_id):
     session['cart'] = cart
     return redirect(url_for('main.cart'))
 
+# ─── AUTH ROUTES ─────────────────────────────────────────
+
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.account'))
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('main.register'))
+
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('An account with this email already exists.', 'danger')
+            return redirect(url_for('main.register'))
+
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        flash(f'Welcome to Coach Factory, {first_name}!', 'success')
+        return redirect(url_for('main.account'))
+    return render_template('register.html')
+
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.account'))
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):
+            login_user(user)
+            flash(f'Welcome back, {user.first_name}!', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main.account'))
+        else:
+            flash('Invalid email or password.', 'danger')
+    return render_template('login.html')
+
+@main.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('main.index'))
+
+@main.route('/account')
+@login_required
+def account():
+    return render_template('account.html')
+
 # ─── ADMIN ROUTES ────────────────────────────────────────
 
 @main.route('/admin')
@@ -64,7 +129,8 @@ def admin():
     if not session.get('admin_logged_in'):
         return redirect(url_for('main.admin_login'))
     products = Product.query.all()
-    return render_template('admin_dashboard.html', products=products)
+    users = User.query.all()
+    return render_template('admin_dashboard.html', products=products, users=users)
 
 @main.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():

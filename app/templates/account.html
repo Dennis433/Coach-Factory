@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Account Header -->
+<section style="background:#1a1a1a; padding:50px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <p style="color:#c8a96e; font-size:12px; letter-spacing:3px; margin:0;">
+                    COACH FACTORY
+                </p>
+                <h1 style="color:white; letter-spacing:4px; font-size:28px; margin:0;">
+                    MY ACCOUNT
+                </h1>
+            </div>
+            <a href="/logout" class="btn"
+               style="border:1px solid #ccc; color:#ccc;
+                      letter-spacing:2px; font-size:12px;">
+                <i class="fas fa-sign-out-alt me-2"></i>LOGOUT
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Account Content -->
+<section style="padding:60px 0; background:#f0ede8; min-height:70vh;">
+    <div class="container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} text-center mb-4"
+                   style="border-radius:0; font-size:13px;">
+                  {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="row g-4">
+
+            <!-- Profile Card -->
+            <div class="col-md-4">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 2px 15px rgba(0,0,0,0.08);">
+                    <div class="card-body p-4 text-center">
+                        <div style="width:80px; height:80px; background:#1a1a1a;
+                                    border-radius:50%; display:flex; align-items:center;
+                                    justify-content:center; margin:0 auto 20px;">
+                            <i class="fas fa-user" style="font-size:30px; color:#c8a96e;"></i>
+                        </div>
+                        <h5 style="letter-spacing:2px; font-size:16px;">
+                            {{ current_user.first_name|upper }}
+                            {{ current_user.last_name|upper }}
+                        </h5>
+                        <p style="font-size:13px; color:#999;">
+                            {{ current_user.email }}
+                        </p>
+                        <p style="font-size:11px; color:#ccc; letter-spacing:1px;">
+                            MEMBER SINCE
+                            {{ current_user.created_at.strftime('%B %Y') }}
+                        </p>
+                        <hr>
+                        <a href="/products" class="btn btn-coach w-100"
+                           style="letter-spacing:2px; font-size:12px;">
+                            <i class="fas fa-shopping-bag me-2"></i>SHOP NOW
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Details -->
+            <div class="col-md-8">
+
+                <!-- Welcome Message -->
+                <div class="card mb-4" style="border:none; border-radius:0;
+                                               box-shadow:0 2px 15px rgba(0,0,0,0.08);">
+                    <div class="card-body p-4">
+                        <h5 style="letter-spacing:2px; font-size:14px;
+                                   border-bottom:1px solid #eee; padding-bottom:15px;">
+                            WELCOME, {{ current_user.first_name|upper }}!
+                        </h5>
+                        <p style="font-size:14px; color:#666; line-height:1.8;">
+                            Thank you for being a valued Coach Factory member.
+                            Explore our latest collection of luxury bags crafted
+                            with the finest leather and timeless design.
+                        </p>
+                        <div class="row mt-3">
+                            <div class="col-md-4 text-center">
+                                <div style="padding:20px; background:#f0ede8;">
+                                    <i class="fas fa-shopping-bag fa-2x mb-2"
+                                       style="color:#c8a96e;"></i>
+                                    <p style="font-size:12px; letter-spacing:1px;
+                                              color:#999; margin:0;">SHOP</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div style="padding:20px; background:#f0ede8;">
+                                    <i class="fas fa-heart fa-2x mb-2"
+                                       style="color:#c8a96e;"></i>
+                                    <p style="font-size:12px; letter-spacing:1px;
+                                              color:#999; margin:0;">WISHLIST</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div style="padding:20px; background:#f0ede8;">
+                                    <i class="fas fa-box fa-2x mb-2"
+                                       style="color:#c8a96e;"></i>
+                                    <p style="font-size:12px; letter-spacing:1px;
+                                              color:#999; margin:0;">ORDERS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 2px 15px rgba(0,0,0,0.08);">
+                    <div class="card-body p-4">
+                        <h5 style="letter-spacing:2px; font-size:14px;
+                                   border-bottom:1px solid #eee; padding-bottom:15px;">
+                            ACCOUNT INFORMATION
+                        </h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <label style="font-size:11px; letter-spacing:2px;
+                                              color:#999;">FIRST NAME</label>
+                                <p style="font-size:15px; color:#1a1a1a; margin:0;">
+                                    {{ current_user.first_name }}
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label style="font-size:11px; letter-spacing:2px;
+                                              color:#999;">LAST NAME</label>
+                                <p style="font-size:15px; color:#1a1a1a; margin:0;">
+                                    {{ current_user.last_name }}
+                                </p>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label style="font-size:11px; letter-spacing:2px;
+                                              color:#999;">EMAIL ADDRESS</label>
+                                <p style="font-size:15px; color:#1a1a1a; margin:0;">
+                                    {{ current_user.email }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
