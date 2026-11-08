@@ -27,6 +27,13 @@ def products():
     return render_template('products.html', products=all_products,
                            categories=categories, active=category)
 
+@main.route('/product/<int:product_id>')
+def product_detail(product_id):
+    product = Product.query.get_or_404(product_id)
+    related = Product.query.filter_by(category=product.category)\
+                     .filter(Product.id != product_id).limit(3).all()
+    return render_template('product_detail.html', product=product, related=related)
+
 @main.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
     cart = session.get('cart', [])

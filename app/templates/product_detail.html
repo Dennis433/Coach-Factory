@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<section style="background:#f0ede8; padding:15px 0;">
+    <div class="container">
+        <p style="font-size:12px; color:#999; letter-spacing:1px; margin:0;">
+            <a href="/" style="color:#999; text-decoration:none;">HOME</a>
+            <span class="mx-2">›</span>
+            <a href="/products" style="color:#999; text-decoration:none;">SHOP</a>
+            <span class="mx-2">›</span>
+            <a href="/products?category={{ product.category }}"
+               style="color:#999; text-decoration:none;">
+                {{ product.category|upper }}
+            </a>
+            <span class="mx-2">›</span>
+            <span style="color:#1a1a1a;">{{ product.name|upper }}</span>
+        </p>
+    </div>
+</section>
+
+<!-- Product Detail -->
+<section style="padding:60px 0;">
+    <div class="container">
+        <div class="row g-5">
+
+            <!-- Left: Images -->
+            <div class="col-md-7">
+
+                <!-- Main Image -->
+                <div style="width:100%; height:550px; overflow:hidden;
+                            background:#f0ede8; margin-bottom:15px;">
+                    {% if product.first_image() %}
+                    <img src="{{ product.first_image() }}"
+                         alt="{{ product.name }}"
+                         id="detail-main-img"
+                         style="width:100%; height:100%;
+                                object-fit:cover; object-position:center;
+                                transition: opacity 0.3s ease;">
+                    {% else %}
+                    <div style="width:100%; height:100%; display:flex;
+                                align-items:center; justify-content:center;">
+                        <i class="fas fa-shopping-bag"
+                           style="font-size:120px; color:#ccc;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Thumbnail Strip -->
+                {% if product.get_images()|length > 1 %}
+                <div class="d-flex gap-2 flex-wrap">
+                    {% for img in product.get_images() %}
+                    <img src="{{ img }}"
+                         alt="{{ product.name }}"
+                         class="thumbnail-img {% if loop.first %}active{% endif %}"
+                         style="width:80px; height:80px;"
+                         onclick="detailSwitchImage('{{ img }}', this)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Right: Info -->
+            <div class="col-md-5">
+                <p class="product-category mb-2">{{ product.category }}</p>
+                <h1 style="font-size:32px; color:#1a1a1a; margin-bottom:15px;">
+                    {{ product.name }}
+                </h1>
+
+                <!-- Price -->
+                <div style="margin-bottom:25px;">
+                    <span style="font-size:28px; font-weight:bold; color:#1a1a1a;">
+                        ${{ "%.2f"|format(product.price) }}
+                    </span>
+                </div>
+
+                <!-- Description -->
+                <div style="margin-bottom:30px; padding-bottom:30px;
+                            border-bottom:1px solid #eee;">
+                    <p style="font-size:15px; color:#666; line-height:1.9;">
+                        {{ product.description }}
+                    </p>
+                </div>
+
+                <!-- Features -->
+                <div style="margin-bottom:30px; padding-bottom:30px;
+                            border-bottom:1px solid #eee;">
+                    <p style="font-size:12px; letter-spacing:2px; color:#999;
+                               margin-bottom:15px;">DETAILS</p>
+                    <ul style="list-style:none; padding:0; font-size:14px; color:#666;">
+                        <li style="margin-bottom:10px;">
+                            <i class="fas fa-check me-2" style="color:#c8a96e;"></i>
+                            Premium full-grain leather
+                        </li>
+                        <li style="margin-bottom:10px;">
+                            <i class="fas fa-check me-2" style="color:#c8a96e;"></i>
+                            Signature Coach hardware
+                        </li>
+                        <li style="margin-bottom:10px;">
+                            <i class="fas fa-check me-2" style="color:#c8a96e;"></i>
+                            Interior zip and slip pockets
+                        </li>
+                        <li style="margin-bottom:10px;">
+                            <i class="fas fa-check me-2" style="color:#c8a96e;"></i>
+                            Adjustable strap included
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Add to Cart -->
+                <a href="/add_to_cart/{{ product.id }}"
+                   class="btn btn-coach w-100 mb-3"
+                   style="padding:18px; letter-spacing:3px; font-size:14px;">
+                    <i class="fas fa-shopping-bag me-2"></i>ADD TO BAG
+                </a>
+
+                <a href="/products" class="btn btn-outline-coach w-100"
+                   style="padding:15px; letter-spacing:3px; font-size:13px;">
+                    CONTINUE SHOPPING
+                </a>
+
+                <!-- Shipping Info -->
+                <div class="mt-4" style="background:#f0ede8; padding:20px;">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-truck me-3" style="color:#c8a96e;"></i>
+                        <span style="font-size:13px; color:#666;">
+                            Free shipping on orders over $200
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-undo me-3" style="color:#c8a96e;"></i>
+                        <span style="font-size:13px; color:#666;">
+                            30 day hassle-free returns
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt me-3" style="color:#c8a96e;"></i>
+                        <span style="font-size:13px; color:#666;">
+                            Authentic Coach product guaranteed
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+{% if related %}
+<section style="padding:60px 0; background:#f0ede8;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <p class="section-title">YOU MAY ALSO LIKE</p>
+            <h2 class="section-heading">Related Bags</h2>
+        </div>
+        <div class="row g-4">
+            {% for item in related %}
+            <div class="col-md-4">
+                <div class="card product-card h-100">
+                    <a href="/product/{{ item.id }}">
+                        <div class="product-img-wrap">
+                            {% if item.first_image() %}
+                            <img src="{{ item.first_image() }}"
+                                 alt="{{ item.name }}">
+                            {% else %}
+                            <div class="product-img-placeholder">
+                                <i class="fas fa-shopping-bag"
+                                   style="font-size:80px; color:#ccc;"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                    <div class="card-body p-4">
+                        <p class="product-category">{{ item.category }}</p>
+                        <h5 class="card-title">
+                            <a href="/product/{{ item.id }}"
+                               style="color:#1a1a1a; text-decoration:none;">
+                                {{ item.name }}
+                            </a>
+                        </h5>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="product-price">
+                                ${{ "%.2f"|format(item.price) }}
+                            </span>
+                            <a href="/product/{{ item.id }}" class="btn btn-coach">
+                                VIEW
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<script>
+function detailSwitchImage(imgUrl, thumb) {
+    const mainImg = document.getElementById('detail-main-img');
+    mainImg.style.opacity = '0';
+    setTimeout(() => {
+        mainImg.src = imgUrl;
+        mainImg.style.opacity = '1';
+    }, 150);
+    document.querySelectorAll('.thumbnail-img').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
+</script>
+
+{% endblock %}

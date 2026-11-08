@@ -35,23 +35,28 @@
                 <div class="card product-card h-100">
 
                     <!-- Main Product Image -->
-                    <div class="product-img-wrap">
-                        {% if product.first_image() %}
-                        <img src="{{ product.first_image() }}"
-                             alt="{{ product.name }}"
-                             id="main-img-{{ product.id }}">
-                        {% else %}
-                        <div class="product-img-placeholder">
-                            <i class="fas fa-shopping-bag"
-                               style="font-size:80px; color:#ccc;"></i>
+                    <a href="/product/{{ product.id }}">
+                        <div class="product-img-wrap">
+                            {% if product.first_image() %}
+                            <img src="{{ product.first_image() }}"
+                                 alt="{{ product.name }}"
+                                 id="main-img-{{ product.id }}">
+                            {% else %}
+                            <div class="product-img-placeholder">
+                                <i class="fas fa-shopping-bag"
+                                   style="font-size:80px; color:#ccc;"></i>
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                    </div>
+                    </a>
 
                     <div class="card-body p-4">
                         <p class="product-category">{{ product.category }}</p>
                         <h5 class="card-title" style="font-size:18px;">
-                            {{ product.name }}
+                            <a href="/product/{{ product.id }}"
+                               style="color:#1a1a1a; text-decoration:none;">
+                                {{ product.name }}
+                            </a>
                         </h5>
                         <p class="card-text text-muted"
                            style="font-size:14px; line-height:1.6;">
@@ -74,8 +79,8 @@
                             <span class="product-price">
                                 ${{ "%.2f"|format(product.price) }}
                             </span>
-                            <a href="/add_to_cart/{{ product.id }}" class="btn btn-coach">
-                                <i class="fas fa-shopping-bag me-1"></i> ADD TO BAG
+                            <a href="/product/{{ product.id }}" class="btn btn-coach">
+                                <i class="fas fa-eye me-1"></i> VIEW
                             </a>
                         </div>
                     </div>
@@ -96,8 +101,7 @@
 <script>
 function switchImage(productId, imgUrl, thumb) {
     document.getElementById('main-img-' + productId).src = imgUrl;
-    document.querySelectorAll('#product-' + productId + ' .thumbnail-img')
-        .forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.thumbnail-img').forEach(t => t.classList.remove('active'));
     thumb.classList.add('active');
 }
 </script>
