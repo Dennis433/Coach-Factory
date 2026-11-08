@@ -1,28 +1,171 @@
-<ul class="navbar-nav ms-auto align-items-center">
-    <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-    <li class="nav-item"><a class="nav-link" href="/products">SHOP</a></li>
-    {% if current_user.is_authenticated %}
-    <li class="nav-item">
-        <a class="nav-link" href="/account">
-            <i class="fas fa-user me-1"></i>
-            {{ current_user.first_name|upper }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Factory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Georgia', serif; background-color: #fafafa; }
+
+        .navbar { background-color: #1a1a1a !important; padding: 15px 0; }
+        .navbar-brand { color: #fff !important; font-size: 20px; letter-spacing: 3px; font-weight: bold; }
+        .nav-link { color: #ccc !important; letter-spacing: 1px; font-size: 13px; }
+        .nav-link:hover { color: #fff !important; }
+
+        .logo-img { height: 45px; filter: invert(1); margin-right: 10px; }
+
+        .hero { background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 100%);
+                color: white; padding: 120px 0; text-align: center; }
+        .hero h1 { font-size: 52px; letter-spacing: 6px; margin-bottom: 20px; }
+        .hero p { font-size: 18px; letter-spacing: 2px; color: #ccc; }
+
+        .btn-coach { background-color: #1a1a1a; color: white; border: none;
+                     padding: 12px 35px; letter-spacing: 2px; font-size: 13px; }
+        .btn-coach:hover { background-color: #333; color: white; }
+
+        .btn-outline-coach { border: 2px solid #1a1a1a; color: #1a1a1a;
+                              padding: 10px 30px; letter-spacing: 2px; font-size: 13px; }
+        .btn-outline-coach:hover { background-color: #1a1a1a; color: white; }
+
+        .product-card { border: none; box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+                        transition: transform 0.3s; border-radius: 0; }
+        .product-card:hover { transform: translateY(-5px); }
+
+        .product-img-wrap { width: 100%; height: 300px; overflow: hidden;
+                            background: #f0ede8; position: relative; }
+        .product-img-wrap img { width: 100%; height: 100%;
+                                object-fit: cover; object-position: center center;
+                                transition: transform 0.4s ease; }
+        .product-img-wrap:hover img { transform: scale(1.05); }
+
+        .product-img-placeholder { width: 100%; height: 300px; background: #f0ede8;
+                                   display: flex; align-items: center;
+                                   justify-content: center; }
+
+        .product-price { color: #1a1a1a; font-size: 18px; font-weight: bold; }
+        .product-category { color: #999; font-size: 12px; letter-spacing: 2px;
+                            text-transform: uppercase; }
+
+        .section-title { letter-spacing: 4px; text-transform: uppercase;
+                         font-size: 14px; color: #999; margin-bottom: 10px; }
+        .section-heading { font-size: 36px; color: #1a1a1a; margin-bottom: 40px; }
+
+        .footer { background-color: #1a1a1a; color: #ccc;
+                  padding: 50px 0; margin-top: 80px; }
+        .footer h6 { color: white; letter-spacing: 2px; text-transform: uppercase;
+                     margin-bottom: 20px; }
+        .footer a { color: #999; text-decoration: none; display: block;
+                    margin-bottom: 8px; font-size: 13px; }
+        .footer a:hover { color: white; }
+
+        .cart-badge { background-color: #c8a96e; color: white; }
+        .flash-message { border-radius: 0; border: none; }
+
+        .thumbnail-img { width: 50px; height: 50px; object-fit: cover;
+                         object-position: center; border: 2px solid transparent;
+                         cursor: pointer; transition: border-color 0.2s; }
+        .thumbnail-img:hover { border-color: #1a1a1a !important; }
+        .thumbnail-img.active { border-color: #c8a96e !important; }
+
+        .nav-register { border: 1px solid #c8a96e !important;
+                        padding: 6px 15px !important;
+                        color: #c8a96e !important;
+                        margin-left: 5px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="/static/images/logo.jpeg" alt="Coach Logo" class="logo-img">
+            COACH FACTORY
         </a>
-    </li>
-    {% else %}
-    <li class="nav-item"><a class="nav-link" href="/login">LOGIN</a></li>
-    <li class="nav-item">
-        <a class="nav-link" href="/register"
-           style="border:1px solid #c8a96e; padding:6px 15px; color:#c8a96e !important;">
-            REGISTER
-        </a>
-    </li>
-    {% endif %}
-    <li class="nav-item ms-3">
-        <a class="nav-link" href="/cart">
-            <i class="fas fa-shopping-bag"></i>
-            <span class="badge cart-badge ms-1">
-                {{ session.get('cart', [])|length }}
-            </span>
-        </a>
-    </li>
-</ul>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon" style="filter:invert(1)"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">HOME</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">SHOP</a>
+                </li>
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/account">
+                        <i class="fas fa-user me-1"></i>
+                        {{ current_user.first_name|upper }}
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">LOGIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-register" href="/register">REGISTER</a>
+                </li>
+                {% endif %}
+                <li class="nav-item ms-3">
+                    <a class="nav-link" href="/cart">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="badge cart-badge ms-1">
+                            {{ session.get('cart', [])|length }}
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} flash-message text-center mb-0">
+          {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h6>Coach Factory</h6>
+                <p style="font-size:13px; color:#999;">
+                    Luxury bags crafted with the finest leather and timeless design.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h6>Shop</h6>
+                <a href="/products?category=Shoulder Bags">Shoulder Bags</a>
+                <a href="/products?category=Totes">Totes</a>
+                <a href="/products?category=Crossbody">Crossbody</a>
+                <a href="/products?category=Mini Bags">Mini Bags</a>
+            </div>
+            <div class="col-md-4">
+                <h6>Contact</h6>
+                <p style="font-size:13px; color:#999;">
+                    <i class="fas fa-envelope me-2"></i>support@coachfactory.com<br>
+                    <i class="fas fa-phone me-2"></i>+1 800 555 0199
+                </p>
+            </div>
+        </div>
+        <hr style="border-color:#333; margin-top:40px;">
+        <p class="text-center" style="font-size:12px; color:#666;">
+            © 2026 Coach Factory. All rights reserved.
+        </p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
