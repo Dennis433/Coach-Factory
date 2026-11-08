@@ -6,34 +6,43 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">
-                <div class="card" style="border:none; border-radius:0; box-shadow:0 5px 30px rgba(0,0,0,0.1);">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 5px 30px rgba(0,0,0,0.1);">
                     <div class="card-body p-5">
 
                         <div class="text-center mb-4">
                             <img src="/static/images/logo.jpeg" alt="Coach Logo"
                                  style="height:50px; margin-bottom:15px;">
                             <h4 style="letter-spacing:3px; font-size:16px;">ADMIN PANEL</h4>
-                            <p style="font-size:12px; color:#999; letter-spacing:1px;">OFFICIAL COACH FACTORY</p>
+                            <p style="font-size:12px; color:#999; letter-spacing:1px;">
+                                COACH FACTORY
+                            </p>
                         </div>
 
                         {% with messages = get_flashed_messages(with_categories=true) %}
                           {% if messages %}
                             {% for category, message in messages %}
                               <div class="alert alert-{{ category }} text-center"
-                                   style="font-size:13px; border-radius:0;">{{ message }}</div>
+                                   style="font-size:13px; border-radius:0;">
+                                  {{ message }}
+                              </div>
                             {% endfor %}
                           {% endif %}
                         {% endwith %}
 
                         <form method="POST">
                             <div class="mb-3">
-                                <label style="font-size:12px; letter-spacing:2px; color:#999;">USERNAME</label>
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    USERNAME
+                                </label>
                                 <input type="text" name="username" class="form-control"
                                        style="border-radius:0; border:1px solid #ddd; padding:12px;"
                                        required>
                             </div>
                             <div class="mb-4">
-                                <label style="font-size:12px; letter-spacing:2px; color:#999;">PASSWORD</label>
+                                <label style="font-size:12px; letter-spacing:2px; color:#999;">
+                                    PASSWORD
+                                </label>
                                 <input type="password" name="password" class="form-control"
                                        style="border-radius:0; border:1px solid #ddd; padding:12px;"
                                        required>

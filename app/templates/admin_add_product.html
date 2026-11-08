@@ -7,13 +7,16 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <p style="color:#c8a96e; font-size:12px; letter-spacing:3px; margin:0;">OFFICIAL COACH FACTORY</p>
+                <p style="color:#c8a96e; font-size:12px; letter-spacing:3px; margin:0;">
+                    COACH FACTORY
+                </p>
                 <h1 style="color:white; letter-spacing:4px; font-size:28px; margin:0;">
                     {% if product %}EDIT PRODUCT{% else %}ADD PRODUCT{% endif %}
                 </h1>
             </div>
             <a href="/admin" class="btn"
-               style="border:1px solid #ccc; color:#ccc; letter-spacing:2px; font-size:12px;">
+               style="border:1px solid #ccc; color:#ccc;
+                      letter-spacing:2px; font-size:12px;">
                 <i class="fas fa-arrow-left me-2"></i>BACK TO DASHBOARD
             </a>
         </div>
@@ -33,7 +36,9 @@
                           {% if messages %}
                             {% for category, message in messages %}
                               <div class="alert alert-{{ category }} text-center mb-4"
-                                   style="border-radius:0; font-size:13px;">{{ message }}</div>
+                                   style="border-radius:0; font-size:13px;">
+                                  {{ message }}
+                              </div>
                             {% endfor %}
                           {% endif %}
                         {% endwith %}
@@ -123,7 +128,8 @@
                                     <div class="d-flex flex-wrap gap-2">
                                         {% for img in product.get_images() %}
                                         <img src="{{ img }}" alt="Product Image"
-                                             style="height:80px; width:80px; object-fit:cover;
+                                             style="height:80px; width:80px;
+                                                    object-fit:cover; object-position:center;
                                                     border:1px solid #ddd;">
                                         {% endfor %}
                                     </div>
@@ -138,7 +144,7 @@
                                        accept="image/*"
                                        multiple>
                                 <small style="font-size:11px; color:#999; letter-spacing:1px;">
-                                    Select multiple images — hold Ctrl (Windows) to pick more than one
+                                    Hold Ctrl (Windows) to select multiple images at once
                                 </small>
                             </div>
 
