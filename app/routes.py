@@ -37,10 +37,13 @@ def product_detail(product_id):
 
 @main.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
+    if not current_user.is_authenticated:
+        flash('Please login to add items to your bag.', 'warning')
+        return redirect(url_for('main.login'))
     cart = session.get('cart', [])
     cart.append(product_id)
     session['cart'] = cart
-    flash('Item added to cart!', 'success')
+    flash('Item added to your bag!', 'success')
     return redirect(url_for('main.cart'))
 
 @main.route('/cart')

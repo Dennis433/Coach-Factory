@@ -5,7 +5,7 @@
 <!-- Page Header -->
 <section style="background:#1a1a1a; padding:50px 0; text-align:center;">
     <div class="container">
-        <p class="section-title" style="color:#c8a96e;">OFFICIAL COACH FACTORY</p>
+        <p class="section-title" style="color:#c8a96e;">COACH FACTORY</p>
         <h1 style="color:white; letter-spacing:4px; font-size:36px;">YOUR BAG</h1>
     </div>
 </section>
@@ -18,30 +18,61 @@
             <!-- Cart Items -->
             <div class="col-md-8">
                 {% for item in cart_items %}
-                <div class="card mb-3" style="border:none; box-shadow:0 2px 10px rgba(0,0,0,0.08); border-radius:0;">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-2 text-center">
-                                <div style="width:70px; height:70px; background:#f0ede8;
-                                            display:flex; align-items:center; justify-content:center;">
-                                    <i class="fas fa-shopping-bag" style="font-size:30px; color:#ccc;"></i>
+                <div class="card mb-3" style="border:none; border-radius:0;
+                                               box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+                    <div class="card-body p-3 p-md-4">
+                        <div class="row align-items-center g-3">
+
+                            <!-- Product Image -->
+                            <div class="col-3 col-md-2">
+                                {% if item.first_image() %}
+                                <img src="{{ item.first_image() }}"
+                                     alt="{{ item.name }}"
+                                     style="width:100%; aspect-ratio:1;
+                                            object-fit:cover; object-position:center;">
+                                {% else %}
+                                <div style="width:100%; aspect-ratio:1;
+                                            background:#f0ede8; display:flex;
+                                            align-items:center; justify-content:center;">
+                                    <i class="fas fa-shopping-bag"
+                                       style="font-size:24px; color:#ccc;"></i>
                                 </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-6">
-                                <p class="product-category mb-1">{{ item.category }}</p>
-                                <h6 style="font-size:16px;">{{ item.name }}</h6>
-                                <p class="text-muted" style="font-size:13px;">{{ item.description }}</p>
+
+                            <!-- Product Info -->
+                            <div class="col-6 col-md-6">
+                                <p class="product-category mb-1"
+                                   style="font-size:10px;">
+                                    {{ item.category }}
+                                </p>
+                                <h6 style="font-size:14px; margin:0 0 4px;">
+                                    {{ item.name }}
+                                </h6>
+                                <p class="text-muted d-none d-md-block"
+                                   style="font-size:12px; margin:0;">
+                                    {{ item.description[:50] }}...
+                                </p>
                             </div>
-                            <div class="col-md-2 text-center">
-                                <span class="product-price">${{ "%.2f"|format(item.price) }}</span>
+
+                            <!-- Price -->
+                            <div class="col-3 col-md-2 text-center">
+                                <span class="product-price"
+                                      style="font-size:15px;">
+                                    ${{ "%.2f"|format(item.price) }}
+                                </span>
                             </div>
-                            <div class="col-md-2 text-center">
+
+                            <!-- Remove -->
+                            <div class="col-12 col-md-2 text-md-center">
                                 <a href="/remove_from_cart/{{ item.id }}"
-                                   class="btn btn-sm"
-                                   style="color:#999; border:1px solid #ddd; font-size:12px;">
-                                    <i class="fas fa-trash"></i> REMOVE
+                                   class="btn btn-sm w-100"
+                                   style="color:#999; border:1px solid #ddd;
+                                          font-size:11px; border-radius:0;">
+                                    <i class="fas fa-trash me-1"></i>REMOVE
                                 </a>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -55,16 +86,21 @@
             </div>
 
             <!-- Order Summary -->
-            <div class="col-md-4">
-                <div class="card" style="border:none; box-shadow:0 2px 10px rgba(0,0,0,0.08); border-radius:0;">
+            <div class="col-md-4 mt-4 mt-md-0">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 2px 10px rgba(0,0,0,0.08);">
                     <div class="card-body p-4">
-                        <h5 style="letter-spacing:2px; font-size:14px; text-transform:uppercase;
-                                   border-bottom:1px solid #eee; padding-bottom:15px;">
+                        <h5 style="letter-spacing:2px; font-size:14px;
+                                   text-transform:uppercase;
+                                   border-bottom:1px solid #eee;
+                                   padding-bottom:15px;">
                             Order Summary
                         </h5>
                         <div class="d-flex justify-content-between mt-3">
                             <span style="font-size:14px; color:#999;">Subtotal</span>
-                            <span style="font-size:14px;">${{ "%.2f"|format(total) }}</span>
+                            <span style="font-size:14px;">
+                                ${{ "%.2f"|format(total) }}
+                            </span>
                         </div>
                         <div class="d-flex justify-content-between mt-2">
                             <span style="font-size:14px; color:#999;">Shipping</span>
@@ -84,17 +120,22 @@
                             CHECKOUT
                         </button>
                         <div class="text-center mt-3">
-                            <i class="fas fa-lock me-1" style="color:#999; font-size:12px;"></i>
-                            <span style="font-size:12px; color:#999;">SECURE CHECKOUT</span>
+                            <i class="fas fa-lock me-1"
+                               style="color:#999; font-size:12px;"></i>
+                            <span style="font-size:12px; color:#999;">
+                                SECURE CHECKOUT
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Free Shipping Notice -->
                 {% if total < 200 %}
-                <div class="mt-3 p-3" style="background:#f0ede8; font-size:13px; text-align:center;">
+                <div class="mt-3 p-3"
+                     style="background:#f0ede8; font-size:13px; text-align:center;">
                     <i class="fas fa-truck me-1" style="color:#c8a96e;"></i>
-                    Add <strong>${{ "%.2f"|format(200 - total) }}</strong> more for FREE shipping!
+                    Add <strong>${{ "%.2f"|format(200 - total) }}</strong>
+                    more for FREE shipping!
                 </div>
                 {% endif %}
             </div>
@@ -105,7 +146,9 @@
         <!-- Empty Cart -->
         <div class="text-center py-5">
             <i class="fas fa-shopping-bag" style="font-size:80px; color:#ddd;"></i>
-            <h3 class="mt-4" style="color:#999; letter-spacing:2px;">YOUR BAG IS EMPTY</h3>
+            <h3 class="mt-4" style="color:#999; letter-spacing:2px;">
+                YOUR BAG IS EMPTY
+            </h3>
             <p class="text-muted">Looks like you haven't added anything yet.</p>
             <a href="/products" class="btn btn-coach mt-3">START SHOPPING</a>
         </div>
