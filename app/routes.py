@@ -9,6 +9,7 @@ main = Blueprint('main', __name__)
 
 ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'coachfactory2026'
+BTC_ADDRESS = 'bc1qervr0scl6gpzf2sdenquazuw087s6h7f97hfz5'
 
 # ─── PUBLIC ROUTES ───────────────────────────────────────
 
@@ -60,6 +61,67 @@ def remove_from_cart(product_id):
         cart.remove(product_id)
     session['cart'] = cart
     return redirect(url_for('main.cart'))
+
+# ─── PAYMENT ROUTES ──────────────────────────────────────
+
+@main.route('/payment')
+@login_required
+def payment():
+    cart_ids = session.get('cart', [])
+    if not cart_ids:
+        flash('Your bag is empty.', 'warning')
+        return redirect(url_for('main.cart'))
+    cart_items = Product.query.filter(Product.id.in_(cart_ids)).all()
+    total = sum(item.price for item in cart_items)
+    shipping = 0 if total >= 200 else 15
+    grand_total = total + shipping
+    return render_template('payment.html',
+                           cart_items=cart_items,
+                           total=total,
+                           shipping=shipping,
+                           grand_total=grand_total,
+                           btc_address=BTC_ADDRESS)
+
+@main.route('/submit_payment', methods=['POST'])
+@login_required
+def submit_payment():
+    cart_ids = session.get('cart', [])
+    if not cart_ids:
+        return redirect(url_for('main.cart'))
+
+    cart_items = Product.query.filter(Product.id.in_(cart_ids)).all()
+    total = sum(item.price for item in cart_items)
+    shipping = 0 if total >= 200 else 15
+    grand_total = total + shipping
+    tx_hash = request.form.get('tx_hash', '').strip()
+    item_names = ','.join([item.name for item in cart_items])
+
+    order = Order(
+        user_id=current_user.id,
+        total=grand_total,
+        status='Pending',
+        tx_hash=tx_hash,
+        items=item_names
+    )
+    db.session.add(order)
+    db.session.commit()
+
+    session['cart'] = []
+    session['last_order_id'] = order.id
+
+    return redirect(url_for('main.payment_pending', order_id=order.id))
+
+@main.route('/payment_pending/<int:order_id>')
+@login_required
+def payment_pending(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('payment_pending.html', order=order)
+
+@main.route('/receipt/<int:order_id>')
+@login_required
+def receipt(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('receipt.html', order=order)
 
 # ─── AUTH ROUTES ─────────────────────────────────────────
 
@@ -123,7 +185,9 @@ def logout():
 @main.route('/account')
 @login_required
 def account():
-    return render_template('account.html')
+    orders = Order.query.filter_by(user_id=current_user.id)\
+                  .order_by(Order.created_at.desc()).all()
+    return render_template('account.html', orders=orders)
 
 # ─── ADMIN ROUTES ────────────────────────────────────────
 
@@ -133,7 +197,11 @@ def admin():
         return redirect(url_for('main.admin_login'))
     products = Product.query.all()
     users = User.query.all()
-    return render_template('admin_dashboard.html', products=products, users=users)
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return render_template('admin_dashboard.html',
+                           products=products,
+                           users=users,
+                           orders=orders)
 
 @main.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -153,6 +221,26 @@ def admin_logout():
     session.pop('admin_logged_in', None)
     flash('Logged out successfully.', 'success')
     return redirect(url_for('main.admin_login'))
+
+@main.route('/admin/confirm_order/<int:order_id>')
+def admin_confirm_order(order_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('main.admin_login'))
+    order = Order.query.get_or_404(order_id)
+    order.status = 'Confirmed'
+    db.session.commit()
+    flash(f'Order #{order.id} confirmed successfully!', 'success')
+    return redirect(url_for('main.admin'))
+
+@main.route('/admin/reject_order/<int:order_id>')
+def admin_reject_order(order_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('main.admin_login'))
+    order = Order.query.get_or_404(order_id)
+    order.status = 'Rejected'
+    db.session.commit()
+    flash(f'Order #{order.id} rejected.', 'danger')
+    return redirect(url_for('main.admin'))
 
 @main.route('/admin/add_product', methods=['GET', 'POST'])
 def admin_add_product():

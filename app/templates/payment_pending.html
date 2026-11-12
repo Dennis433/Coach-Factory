@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section style="min-height:85vh; display:flex; align-items:center;
+                background:#f0ede8; padding:60px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 5px 30px rgba(0,0,0,0.1);">
+                    <div class="card-body p-5 text-center">
+
+                        <!-- Icon -->
+                        <div style="width:90px; height:90px; background:#fff8e1;
+                                    border-radius:50%; display:flex;
+                                    align-items:center; justify-content:center;
+                                    margin:0 auto 25px;">
+                            <i class="fas fa-clock"
+                               style="font-size:40px; color:#c8a96e;"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 style="letter-spacing:3px; font-size:22px;
+                                   color:#1a1a1a; margin-bottom:10px;">
+                            PAYMENT PENDING
+                        </h2>
+                        <p style="font-size:13px; color:#999;
+                                  letter-spacing:2px; margin-bottom:25px;">
+                            WAITING FOR CONFIRMATION
+                        </p>
+
+                        <!-- Order Info -->
+                        <div style="background:#f0ede8; padding:20px;
+                                    margin-bottom:25px;">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Order ID
+                                </span>
+                                <span style="font-size:13px; font-weight:bold;">
+                                    #{{ order.id }}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Amount
+                                </span>
+                                <span style="font-size:13px; font-weight:bold;">
+                                    ${{ "%.2f"|format(order.total) }}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Status
+                                </span>
+                                <span style="background:#fff8e1; color:#856404;
+                                             padding:3px 12px; font-size:11px;
+                                             letter-spacing:1px;">
+                                    {{ order.status|upper }}
+                                </span>
+                            </div>
+                            {% if order.tx_hash %}
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size:13px; color:#999;">
+                                    TX Hash
+                                </span>
+                                <span style="font-size:11px; color:#666;
+                                             font-family:monospace;
+                                             max-width:180px; overflow:hidden;
+                                             text-overflow:ellipsis;
+                                             white-space:nowrap;">
+                                    {{ order.tx_hash }}
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Items -->
+                        <div style="background:#f0ede8; padding:20px;
+                                    margin-bottom:25px; text-align:left;">
+                            <p style="font-size:12px; letter-spacing:2px;
+                                      color:#999; margin-bottom:10px;">
+                                ITEMS ORDERED
+                            </p>
+                            {% for item in order.get_items() %}
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="fas fa-shopping-bag"
+                                   style="color:#c8a96e; font-size:12px;"></i>
+                                <span style="font-size:13px; color:#1a1a1a;">
+                                    {{ item }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Message -->
+                        <div style="background:#e8f5e9; padding:20px;
+                                    margin-bottom:25px;
+                                    border-left:3px solid #4caf50;">
+                            <p style="font-size:13px; color:#2e7d32;
+                                      margin:0; line-height:1.8;">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Your payment has been submitted! Our team will
+                                verify your transaction and confirm your order.
+                                You will receive an e-receipt once confirmed.
+                            </p>
+                        </div>
+
+                        <!-- Steps -->
+                        <div style="text-align:left; margin-bottom:25px;">
+                            <p style="font-size:12px; letter-spacing:2px;
+                                      color:#999; margin-bottom:15px;">
+                                WHAT HAPPENS NEXT
+                            </p>
+                            <div class="d-flex gap-3 mb-3">
+                                <div style="width:28px; height:28px;
+                                            background:#c8a96e; border-radius:50%;
+                                            display:flex; align-items:center;
+                                            justify-content:center; flex-shrink:0;">
+                                    <span style="color:white; font-size:12px;
+                                                 font-weight:bold;">1</span>
+                                </div>
+                                <div>
+                                    <p style="font-size:13px; font-weight:500;
+                                              margin:0;">Admin verifies payment</p>
+                                    <p style="font-size:12px; color:#999; margin:0;">
+                                        We check your transaction on the blockchain
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3 mb-3">
+                                <div style="width:28px; height:28px;
+                                            background:#c8a96e; border-radius:50%;
+                                            display:flex; align-items:center;
+                                            justify-content:center; flex-shrink:0;">
+                                    <span style="color:white; font-size:12px;
+                                                 font-weight:bold;">2</span>
+                                </div>
+                                <div>
+                                    <p style="font-size:13px; font-weight:500;
+                                              margin:0;">Order confirmed</p>
+                                    <p style="font-size:12px; color:#999; margin:0;">
+                                        Your order status updates to confirmed
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <div style="width:28px; height:28px;
+                                            background:#c8a96e; border-radius:50%;
+                                            display:flex; align-items:center;
+                                            justify-content:center; flex-shrink:0;">
+                                    <span style="color:white; font-size:12px;
+                                                 font-weight:bold;">3</span>
+                                </div>
+                                <div>
+                                    <p style="font-size:13px; font-weight:500;
+                                              margin:0;">E-receipt sent</p>
+                                    <p style="font-size:12px; color:#999; margin:0;">
+                                        Your receipt is available in your account
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <a href="/account" class="btn btn-coach w-100 mb-3"
+                           style="letter-spacing:2px; padding:14px;">
+                            <i class="fas fa-user me-2"></i>VIEW MY ACCOUNT
+                        </a>
+                        <a href="/products" class="btn btn-outline-coach w-100"
+                           style="letter-spacing:2px; padding:12px;">
+                            CONTINUE SHOPPING
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

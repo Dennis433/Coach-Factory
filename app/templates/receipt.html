@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section style="min-height:85vh; padding:60px 0; background:#f0ede8;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card" style="border:none; border-radius:0;
+                                          box-shadow:0 5px 30px rgba(0,0,0,0.1);">
+                    <div class="card-body p-5">
+
+                        <!-- Receipt Header -->
+                        <div class="text-center mb-4">
+                            <img src="/static/images/logo.jpeg"
+                                 alt="Coach Logo"
+                                 style="height:50px; margin-bottom:15px;">
+                            <h4 style="letter-spacing:3px; font-size:16px;">
+                                COACH FACTORY
+                            </h4>
+                            <p style="font-size:12px; color:#999; letter-spacing:1px;">
+                                OFFICIAL E-RECEIPT
+                            </p>
+                        </div>
+
+                        <!-- Confirmed Badge -->
+                        <div class="text-center mb-4">
+                            <div style="width:70px; height:70px;
+                                        background:#e8f5e9; border-radius:50%;
+                                        display:flex; align-items:center;
+                                        justify-content:center; margin:0 auto 15px;">
+                                <i class="fas fa-check-circle"
+                                   style="font-size:35px; color:#4caf50;"></i>
+                            </div>
+                            <h5 style="letter-spacing:2px; color:#2e7d32;
+                                       font-size:16px;">
+                                PAYMENT CONFIRMED
+                            </h5>
+                        </div>
+
+                        <hr style="border-color:#eee;">
+
+                        <!-- Order Details -->
+                        <div style="margin:25px 0;">
+                            <p style="font-size:12px; letter-spacing:2px;
+                                      color:#999; margin-bottom:15px;">
+                                ORDER DETAILS
+                            </p>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Order ID
+                                </span>
+                                <span style="font-size:13px; font-weight:bold;">
+                                    #{{ order.id }}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Customer
+                                </span>
+                                <span style="font-size:13px; font-weight:500;">
+                                    {{ order.user.first_name }}
+                                    {{ order.user.last_name }}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Email
+                                </span>
+                                <span style="font-size:13px;">
+                                    {{ order.user.email }}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Date
+                                </span>
+                                <span style="font-size:13px;">
+                                    {{ order.created_at.strftime('%B %d, %Y') }}
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:13px; color:#999;">
+                                    Status
+                                </span>
+                                <span style="background:#e8f5e9; color:#2e7d32;
+                                             padding:3px 12px; font-size:11px;
+                                             letter-spacing:1px;">
+                                    {{ order.status|upper }}
+                                </span>
+                            </div>
+                            {% if order.tx_hash %}
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size:13px; color:#999;">
+                                    TX Hash
+                                </span>
+                                <span style="font-size:11px; color:#666;
+                                             font-family:monospace;
+                                             max-width:200px; overflow:hidden;
+                                             text-overflow:ellipsis;
+                                             white-space:nowrap;">
+                                    {{ order.tx_hash }}
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <hr style="border-color:#eee;">
+
+                        <!-- Items -->
+                        <div style="margin:25px 0;">
+                            <p style="font-size:12px; letter-spacing:2px;
+                                      color:#999; margin-bottom:15px;">
+                                ITEMS PURCHASED
+                            </p>
+                            {% for item in order.get_items() %}
+                            <div class="d-flex justify-content-between
+                                        align-items-center mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div style="width:40px; height:40px;
+                                                background:#f0ede8; display:flex;
+                                                align-items:center;
+                                                justify-content:center;">
+                                        <i class="fas fa-shopping-bag"
+                                           style="color:#c8a96e; font-size:14px;"></i>
+                                    </div>
+                                    <span style="font-size:14px; color:#1a1a1a;">
+                                        {{ item }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <hr style="border-color:#eee;">
+
+                        <!-- Total -->
+                        <div style="margin:25px 0;">
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size:16px; font-weight:bold;
+                                             letter-spacing:2px;">
+                                    TOTAL PAID
+                                </span>
+                                <span style="font-size:20px; font-weight:bold;
+                                             color:#1a1a1a;">
+                                    ${{ "%.2f"|format(order.total) }}
+                                </span>
+                            </div>
+                            <p style="font-size:12px; color:#999; margin-top:5px;">
+                                Paid via Bitcoin
+                            </p>
+                        </div>
+
+                        <hr style="border-color:#eee;">
+
+                        <!-- Thank You -->
+                        <div class="text-center mt-4 mb-4">
+                            <p style="font-size:14px; color:#666; line-height:1.8;">
+                                Thank you for shopping with Coach Factory!
+                                We hope you love your new bag. 🛍️
+                            </p>
+                            <p style="font-size:12px; color:#999;">
+                                For any questions contact us at
+                                support@coachfactory.com
+                            </p>
+                        </div>
+
+                        <!-- Print & Continue Buttons -->
+                        <div class="d-flex gap-3">
+                            <button onclick="window.print()"
+                                    class="btn btn-outline-coach flex-fill"
+                                    style="letter-spacing:2px; padding:12px;">
+                                <i class="fas fa-print me-2"></i>PRINT
+                            </button>
+                            <a href="/products"
+                               class="btn btn-coach flex-fill"
+                               style="letter-spacing:2px; padding:12px;">
+                                SHOP MORE
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
