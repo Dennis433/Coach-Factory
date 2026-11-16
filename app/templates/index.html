@@ -74,7 +74,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Hidden data spans -->
+                    <!-- Hidden data -->
                     <span class="d-none" id="pname-{{ product.id }}">{{ product.name }}</span>
                     <span class="d-none" id="pcat-{{ product.id }}">{{ product.category }}</span>
                     <span class="d-none" id="pdesc-{{ product.id }}">{{ product.description }}</span>
@@ -321,7 +321,7 @@
                     </li>
                 </ul>
 
-                <!-- ADD TO BAG only -->
+                <!-- ADD TO BAG -->
                 <a id="cf-buy" href="#"
                    style="display:block; background:#1a1a1a; color:white;
                           text-align:center; padding:15px; letter-spacing:3px;
@@ -346,87 +346,5 @@
         </div>
     </div>
 </div>
-
-<script>
-window.addEventListener('DOMContentLoaded', function() {
-
-    // Close button
-    document.getElementById('cf-close').addEventListener('click', function() {
-        document.getElementById('cf-modal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    });
-
-    // Click outside to close
-    document.getElementById('cf-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-
-    // ESC key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            document.getElementById('cf-modal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-
-    // Attach VIEW DETAILS buttons
-    {% for product in featured %}
-    (function() {
-        var btn = document.getElementById('btn-{{ product.id }}');
-        if (!btn) return;
-        btn.addEventListener('click', function() {
-            var id    = '{{ product.id }}';
-            var name  = document.getElementById('pname-'  + id).innerText;
-            var cat   = document.getElementById('pcat-'   + id).innerText;
-            var desc  = document.getElementById('pdesc-'  + id).innerText;
-            var price = document.getElementById('pprice-' + id).innerText;
-            var img   = document.getElementById('pimg-'   + id).innerText;
-            var imgs  = document.getElementById('pimgs-'  + id).innerText;
-
-            document.getElementById('cf-name').innerText  = name;
-            document.getElementById('cf-cat').innerText   = cat;
-            document.getElementById('cf-desc').innerText  = desc;
-            document.getElementById('cf-price').innerText = price;
-            document.getElementById('cf-img').src         = img;
-            document.getElementById('cf-buy').href = '/add_to_cart/' + id;
-
-            var thumbs = document.getElementById('cf-thumbs');
-            thumbs.innerHTML = '';
-            var imgList = imgs.split(',').filter(function(x){
-                return x.trim().length > 0;
-            });
-
-            if (imgList.length > 1) {
-                imgList.forEach(function(src, i) {
-                    var t = document.createElement('img');
-                    t.src = src.trim();
-                    t.style.cssText = 'width:50px;height:50px;' +
-                        'object-fit:cover;cursor:pointer;border:2px solid ' +
-                        (i === 0 ? '#c8a96e' : 'transparent') + ';';
-                    t.addEventListener('click', function() {
-                        document.getElementById('cf-img').src = this.src;
-                        thumbs.querySelectorAll('img').forEach(function(x) {
-                            x.style.borderColor = 'transparent';
-                        });
-                        this.style.borderColor = '#c8a96e';
-                    });
-                    thumbs.appendChild(t);
-                });
-                thumbs.style.display = 'flex';
-            } else {
-                thumbs.style.display = 'none';
-            }
-
-            document.getElementById('cf-modal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        });
-    })();
-    {% endfor %}
-
-});
-</script>
 
 {% endblock %}
