@@ -11,6 +11,11 @@ ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'coachfactory2026'
 BTC_ADDRESS = 'bc1qervr0scl6gpzf2sdenquazuw087s6h7f97hfz5'
 
+# Keep the full photo: pad to a square with the site's background colour
+UPLOAD_TRANSFORMATION = [
+    {'width': 1000, 'height': 1000, 'crop': 'pad', 'background': 'rgb:f0ede8'}
+]
+
 
 # ─── CART HELPERS ────────────────────────────────────────
 
@@ -341,10 +346,7 @@ def admin_add_product():
                 upload_result = cloudinary.uploader.upload(
                     file,
                     folder='coach_factory',
-                    transformation=[
-                        {'width': 800, 'height': 1000,
-                         'crop': 'fill', 'gravity': 'auto'}
-                    ]
+                    transformation=UPLOAD_TRANSFORMATION
                 )
                 image_urls.append(upload_result.get('secure_url', ''))
 
@@ -389,10 +391,7 @@ def admin_edit_product(product_id):
                 upload_result = cloudinary.uploader.upload(
                     file,
                     folder='coach_factory',
-                    transformation=[
-                        {'width': 800, 'height': 1000,
-                         'crop': 'fill', 'gravity': 'auto'}
-                    ]
+                    transformation=UPLOAD_TRANSFORMATION
                 )
                 new_urls.append(upload_result.get('secure_url', ''))
 
