@@ -12,12 +12,20 @@ ADMIN_PASSWORD = 'coachfactory2026'
 BTC_ADDRESS = 'bc1qervr0scl6gpzf2sdenquazuw087s6h7f97hfz5'
 
 
-def get_cart_items():
-    """Returns a list of {product, quantity, subtotal} for items in the cart."""
+# ─── CART HELPERS ────────────────────────────────────────
+
+def load_cart():
+    """Always returns the cart as a dict of {product_id: quantity}."""
     cart = session.get('cart', {})
-    if isinstance(cart, list):  # migrate old format
+    if not isinstance(cart, dict):
         cart = {}
         session['cart'] = cart
+    return cart
+
+
+def get_cart_items():
+    """Returns a list of {product, quantity, subtotal} for items in the cart."""
+    cart = load_cart()
     items = []
     for key, qty in cart.items():
         product = Product.query.get(int(key))
@@ -29,6 +37,8 @@ def get_cart_items():
             })
     return items
 
+
+# ─── SHIPPING HELPERS ────────────────────────────────────
 
 def calculate_shipping(subtotal):
     """Free shipping for a customer's first order, otherwise free over $200, else $15."""
@@ -80,7 +90,7 @@ def add_to_cart(product_id):
     if not current_user.is_authenticated:
         flash('Please login to add items to your bag.', 'warning')
         return redirect(url_for('main.login'))
-    cart = session.get('cart', {})
+    cart = load_cart()
     key = str(product_id)
     cart[key] = cart.get(key, 0) + 1
     session['cart'] = cart
@@ -98,7 +108,7 @@ def cart():
 
 @main.route('/update_quantity/<int:product_id>', methods=['POST'])
 def update_quantity(product_id):
-    cart = session.get('cart', {})
+    cart = load_cart()
     key = str(product_id)
     try:
         qty = int(request.form.get('quantity', 1))
@@ -113,7 +123,7 @@ def update_quantity(product_id):
 
 @main.route('/remove_from_cart/<int:product_id>')
 def remove_from_cart(product_id):
-    cart = session.get('cart', {})
+    cart = load_cart()
     cart.pop(str(product_id), None)
     session['cart'] = cart
     return redirect(url_for('main.cart'))
@@ -135,6 +145,7 @@ def payment():
                            total=total,
                            shipping=shipping,
                            grand_total=grand_total,
+                           is_first_order=is_first_order_customer(),
                            btc_address=BTC_ADDRESS)
 
 @main.route('/submit_payment', methods=['POST'])
