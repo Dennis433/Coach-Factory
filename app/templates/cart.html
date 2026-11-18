@@ -2,7 +2,6 @@
 
 {% block content %}
 
-<!-- Page Header -->
 <section style="background:#1a1a1a; padding:50px 0; text-align:center;">
     <div class="container">
         <p class="section-title" style="color:#c8a96e;">COACH FACTORY</p>
@@ -15,7 +14,6 @@
         {% if cart_items %}
         <div class="row">
 
-            <!-- Cart Items -->
             <div class="col-md-8">
                 {% for item in cart_items %}
                 <div class="card mb-3" style="border:none; border-radius:0;
@@ -23,43 +21,53 @@
                     <div class="card-body p-3 p-md-4">
                         <div class="row align-items-center g-3">
                             <div class="col-3 col-md-2">
-                                {% if item.first_image() %}
-                                <img src="{{ item.first_image() }}"
-                                     alt="{{ item.name }}"
+                                {% if item.product.first_image() %}
+                                <img src="{{ item.product.first_image() }}"
+                                     alt="{{ item.product.name }}"
                                      style="width:100%; aspect-ratio:1;
                                             object-fit:cover; object-position:center;">
                                 {% else %}
-                                <div style="width:100%; aspect-ratio:1;
-                                            background:#f0ede8; display:flex;
-                                            align-items:center; justify-content:center;">
+                                <div style="width:100%; aspect-ratio:1; background:#f0ede8;
+                                            display:flex; align-items:center;
+                                            justify-content:center;">
                                     <i class="fas fa-shopping-bag"
                                        style="font-size:24px; color:#ccc;"></i>
                                 </div>
                                 {% endif %}
                             </div>
-                            <div class="col-6 col-md-6">
-                                <p class="product-category mb-1"
-                                   style="font-size:10px;">
-                                    {{ item.category }}
+
+                            <div class="col-9 col-md-4">
+                                <p class="product-category mb-1" style="font-size:10px;">
+                                    {{ item.product.category }}
                                 </p>
                                 <h6 style="font-size:14px; margin:0 0 4px;">
-                                    {{ item.name }}
+                                    {{ item.product.name }}
                                 </h6>
-                                <p class="text-muted d-none d-md-block"
-                                   style="font-size:12px; margin:0;">
-                                    {{ item.description[:50] }}...
+                                <p class="product-price mb-0" style="font-size:15px;">
+                                    ${{ "%.2f"|format(item.product.price) }} each
                                 </p>
                             </div>
-                            <div class="col-3 col-md-2 text-center">
-                                <span class="product-price" style="font-size:15px;">
-                                    ${{ "%.2f"|format(item.price) }}
-                                </span>
+
+                            <div class="col-6 col-md-3">
+                                <form method="POST"
+                                      action="/update_quantity/{{ item.product.id }}"
+                                      class="d-flex align-items-center gap-2">
+                                    <label style="font-size:11px; letter-spacing:1px;
+                                                  color:#999;">QTY</label>
+                                    <input type="number" name="quantity"
+                                           value="{{ item.quantity }}" min="1" max="99"
+                                           onchange="this.form.submit()"
+                                           style="width:70px; padding:6px;
+                                                  border:1px solid #ddd; border-radius:0;">
+                                </form>
                             </div>
-                            <div class="col-12 col-md-2 text-md-center">
-                                <a href="/remove_from_cart/{{ item.id }}"
-                                   class="btn btn-sm w-100"
-                                   style="color:#999; border:1px solid #ddd;
-                                          font-size:11px; border-radius:0;">
+
+                            <div class="col-6 col-md-3 text-end">
+                                <p style="font-size:15px; font-weight:bold; margin:0 0 8px;">
+                                    ${{ "%.2f"|format(item.subtotal) }}
+                                </p>
+                                <a href="/remove_from_cart/{{ item.product.id }}"
+                                   style="font-size:11px; color:#999;">
                                     <i class="fas fa-trash me-1"></i>REMOVE
                                 </a>
                             </div>
@@ -74,22 +82,17 @@
                 </div>
             </div>
 
-            <!-- Order Summary -->
             <div class="col-md-4 mt-4 mt-md-0">
                 <div class="card" style="border:none; border-radius:0;
                                           box-shadow:0 2px 10px rgba(0,0,0,0.08);">
                     <div class="card-body p-4">
-                        <h5 style="letter-spacing:2px; font-size:14px;
-                                   text-transform:uppercase;
-                                   border-bottom:1px solid #eee;
-                                   padding-bottom:15px;">
+                        <h5 style="letter-spacing:2px; font-size:14px; text-transform:uppercase;
+                                   border-bottom:1px solid #eee; padding-bottom:15px;">
                             Order Summary
                         </h5>
                         <div class="d-flex justify-content-between mt-3">
                             <span style="font-size:14px; color:#999;">Subtotal</span>
-                            <span style="font-size:14px;">
-                                ${{ "%.2f"|format(total) }}
-                            </span>
+                            <span style="font-size:14px;">${{ "%.2f"|format(total) }}</span>
                         </div>
                         <div class="d-flex justify-content-between mt-2">
                             <span style="font-size:14px; color:#999;">Shipping</span>
@@ -106,17 +109,9 @@
                         </div>
                         <a href="/payment" class="btn btn-coach w-100 mt-4"
                            style="letter-spacing:2px; padding:15px;">
-                            <i class="fab fa-bitcoin me-2"
-                               style="color:#f7931a;"></i>
+                            <i class="fab fa-bitcoin me-2" style="color:#f7931a;"></i>
                             CHECKOUT WITH BITCOIN
                         </a>
-                        <div class="text-center mt-3">
-                            <i class="fas fa-lock me-1"
-                               style="color:#999; font-size:12px;"></i>
-                            <span style="font-size:12px; color:#999;">
-                                SECURE CHECKOUT
-                            </span>
-                        </div>
                     </div>
                 </div>
 
@@ -134,9 +129,7 @@
         {% else %}
         <div class="text-center py-5">
             <i class="fas fa-shopping-bag" style="font-size:80px; color:#ddd;"></i>
-            <h3 class="mt-4" style="color:#999; letter-spacing:2px;">
-                YOUR BAG IS EMPTY
-            </h3>
+            <h3 class="mt-4" style="color:#999; letter-spacing:2px;">YOUR BAG IS EMPTY</h3>
             <p class="text-muted">Looks like you haven't added anything yet.</p>
             <a href="/products" class="btn btn-coach mt-3">START SHOPPING</a>
         </div>

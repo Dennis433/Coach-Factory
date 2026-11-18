@@ -11,6 +11,25 @@ ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'coachfactory2026'
 BTC_ADDRESS = 'bc1qervr0scl6gpzf2sdenquazuw087s6h7f97hfz5'
 
+
+def get_cart_items():
+    """Returns a list of {product, quantity, subtotal} for items in the cart."""
+    cart = session.get('cart', {})
+    if isinstance(cart, list):  # migrate old format
+        cart = {}
+        session['cart'] = cart
+    items = []
+    for key, qty in cart.items():
+        product = Product.query.get(int(key))
+        if product:
+            items.append({
+                'product': product,
+                'quantity': qty,
+                'subtotal': product.price * qty,
+            })
+    return items
+
+
 # ─── PUBLIC ROUTES ───────────────────────────────────────
 
 @main.route('/')
@@ -47,24 +66,38 @@ def add_to_cart(product_id):
     if not current_user.is_authenticated:
         flash('Please login to add items to your bag.', 'warning')
         return redirect(url_for('main.login'))
-    cart = session.get('cart', [])
-    cart.append(product_id)
+    cart = session.get('cart', {})
+    key = str(product_id)
+    cart[key] = cart.get(key, 0) + 1
     session['cart'] = cart
     flash('Item added to your bag!', 'success')
     return redirect(url_for('main.cart'))
 
 @main.route('/cart')
 def cart():
-    cart_ids = session.get('cart', [])
-    cart_items = Product.query.filter(Product.id.in_(cart_ids)).all()
-    total = sum(item.price for item in cart_items)
-    return render_template('cart.html', cart_items=cart_items, total=total)
+    cart_data = get_cart_items()
+    total = sum(item['subtotal'] for item in cart_data)
+    return render_template('cart.html', cart_items=cart_data, total=total)
+
+@main.route('/update_quantity/<int:product_id>', methods=['POST'])
+def update_quantity(product_id):
+    cart = session.get('cart', {})
+    key = str(product_id)
+    try:
+        qty = int(request.form.get('quantity', 1))
+    except ValueError:
+        qty = 1
+    if qty < 1:
+        cart.pop(key, None)
+    else:
+        cart[key] = min(qty, 99)
+    session['cart'] = cart
+    return redirect(request.referrer or url_for('main.cart'))
 
 @main.route('/remove_from_cart/<int:product_id>')
 def remove_from_cart(product_id):
-    cart = session.get('cart', [])
-    if product_id in cart:
-        cart.remove(product_id)
+    cart = session.get('cart', {})
+    cart.pop(str(product_id), None)
     session['cart'] = cart
     return redirect(url_for('main.cart'))
 
@@ -73,16 +106,15 @@ def remove_from_cart(product_id):
 @main.route('/payment')
 @login_required
 def payment():
-    cart_ids = session.get('cart', [])
-    if not cart_ids:
+    cart_data = get_cart_items()
+    if not cart_data:
         flash('Your bag is empty.', 'warning')
         return redirect(url_for('main.cart'))
-    cart_items = Product.query.filter(Product.id.in_(cart_ids)).all()
-    total = sum(item.price for item in cart_items)
+    total = sum(item['subtotal'] for item in cart_data)
     shipping = 0 if total >= 200 else 15
     grand_total = total + shipping
     return render_template('payment.html',
-                           cart_items=cart_items,
+                           cart_items=cart_data,
                            total=total,
                            shipping=shipping,
                            grand_total=grand_total,
@@ -91,8 +123,8 @@ def payment():
 @main.route('/submit_payment', methods=['POST'])
 @login_required
 def submit_payment():
-    cart_ids = session.get('cart', [])
-    if not cart_ids:
+    cart_data = get_cart_items()
+    if not cart_data:
         return redirect(url_for('main.cart'))
 
     full_name = request.form.get('full_name', '').strip()
@@ -107,12 +139,13 @@ def submit_payment():
         flash('Please fill in your name, phone, address, city and country.', 'danger')
         return redirect(url_for('main.payment'))
 
-    cart_items = Product.query.filter(Product.id.in_(cart_ids)).all()
-    total = sum(item.price for item in cart_items)
+    total = sum(item['subtotal'] for item in cart_data)
     shipping = 0 if total >= 200 else 15
     grand_total = total + shipping
     tx_hash = request.form.get('tx_hash', '').strip()
-    item_names = ','.join([item.name for item in cart_items])
+    item_names = ','.join(
+        f"{item['product'].name} x{item['quantity']}" for item in cart_data
+    )
 
     order = Order(
         user_id=current_user.id,
@@ -131,7 +164,7 @@ def submit_payment():
     db.session.add(order)
     db.session.commit()
 
-    session['cart'] = []
+    session['cart'] = {}
     session['last_order_id'] = order.id
 
     return redirect(url_for('main.payment_pending', order_id=order.id))
