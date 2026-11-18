@@ -4,7 +4,6 @@ from app.models import Product, User, Order
 from app import db
 from app.faq import get_answer
 import cloudinary.uploader
-import os
 
 main = Blueprint('main', __name__)
 
@@ -96,6 +95,18 @@ def submit_payment():
     if not cart_ids:
         return redirect(url_for('main.cart'))
 
+    full_name = request.form.get('full_name', '').strip()
+    phone = request.form.get('phone', '').strip()
+    address = request.form.get('address', '').strip()
+    city = request.form.get('city', '').strip()
+    state = request.form.get('state', '').strip()
+    zip_code = request.form.get('zip_code', '').strip()
+    country = request.form.get('country', '').strip()
+
+    if not all([full_name, phone, address, city, country]):
+        flash('Please fill in your name, phone, address, city and country.', 'danger')
+        return redirect(url_for('main.payment'))
+
     cart_items = Product.query.filter(Product.id.in_(cart_ids)).all()
     total = sum(item.price for item in cart_items)
     shipping = 0 if total >= 200 else 15
@@ -108,7 +119,14 @@ def submit_payment():
         total=grand_total,
         status='Pending',
         tx_hash=tx_hash,
-        items=item_names
+        items=item_names,
+        full_name=full_name,
+        phone=phone,
+        address=address,
+        city=city,
+        state=state,
+        zip_code=zip_code,
+        country=country,
     )
     db.session.add(order)
     db.session.commit()
@@ -152,11 +170,7 @@ def register():
             flash('An account with this email already exists.', 'danger')
             return redirect(url_for('main.register'))
 
-        user = User(
-            first_name=first_name,
-            last_name=last_name,
-            email=email
-        )
+        user = User(first_name=first_name, last_name=last_name, email=email)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
@@ -323,8 +337,7 @@ def admin_edit_product(product_id):
 
         if new_urls:
             existing = product.get_images()
-            all_images = existing + new_urls
-            product.images = ','.join(all_images)
+            product.images = ','.join(existing + new_urls)
 
         db.session.commit()
         flash('Product updated successfully!', 'success')

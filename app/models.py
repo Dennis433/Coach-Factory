@@ -41,6 +41,13 @@ class Order(db.Model):
     status = db.Column(db.String(50), default='Pending')
     tx_hash = db.Column(db.String(200), default='')
     items = db.Column(db.Text, default='')
+    full_name = db.Column(db.String(120), default='')
+    phone = db.Column(db.String(40), default='')
+    address = db.Column(db.Text, default='')
+    city = db.Column(db.String(100), default='')
+    state = db.Column(db.String(100), default='')
+    zip_code = db.Column(db.String(20), default='')
+    country = db.Column(db.String(100), default='')
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     def get_items(self):
