@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request, flash
+from flask import Blueprint, render_template, session, redirect, url_for, request, flash, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import Product, User, Order
 from app import db
+from app.faq import get_answer
 import cloudinary.uploader
 import os
 
@@ -35,6 +36,12 @@ def product_detail(product_id):
     related = Product.query.filter_by(category=product.category)\
                      .filter(Product.id != product_id).limit(3).all()
     return render_template('product_detail.html', product=product, related=related)
+
+@main.route('/chatbot', methods=['POST'])
+def chatbot():
+    data = request.get_json(silent=True) or {}
+    message = data.get('message', '')
+    return jsonify({'reply': get_answer(message)})
 
 @main.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
