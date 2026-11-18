@@ -30,6 +30,20 @@ def get_cart_items():
     return items
 
 
+def calculate_shipping(subtotal):
+    """Free shipping for a customer's first order, otherwise free over $200, else $15."""
+    if current_user.is_authenticated:
+        previous_orders = Order.query.filter_by(user_id=current_user.id).count()
+        if previous_orders == 0:
+            return 0
+    return 0 if subtotal >= 200 else 15
+
+
+def is_first_order_customer():
+    return (current_user.is_authenticated and
+            Order.query.filter_by(user_id=current_user.id).count() == 0)
+
+
 # ─── PUBLIC ROUTES ───────────────────────────────────────
 
 @main.route('/')
@@ -77,7 +91,10 @@ def add_to_cart(product_id):
 def cart():
     cart_data = get_cart_items()
     total = sum(item['subtotal'] for item in cart_data)
-    return render_template('cart.html', cart_items=cart_data, total=total)
+    shipping = calculate_shipping(total)
+    return render_template('cart.html', cart_items=cart_data, total=total,
+                           shipping=shipping,
+                           is_first_order=is_first_order_customer())
 
 @main.route('/update_quantity/<int:product_id>', methods=['POST'])
 def update_quantity(product_id):
@@ -111,7 +128,7 @@ def payment():
         flash('Your bag is empty.', 'warning')
         return redirect(url_for('main.cart'))
     total = sum(item['subtotal'] for item in cart_data)
-    shipping = 0 if total >= 200 else 15
+    shipping = calculate_shipping(total)
     grand_total = total + shipping
     return render_template('payment.html',
                            cart_items=cart_data,
@@ -140,7 +157,7 @@ def submit_payment():
         return redirect(url_for('main.payment'))
 
     total = sum(item['subtotal'] for item in cart_data)
-    shipping = 0 if total >= 200 else 15
+    shipping = calculate_shipping(total)
     grand_total = total + shipping
     tx_hash = request.form.get('tx_hash', '').strip()
     item_names = ','.join(

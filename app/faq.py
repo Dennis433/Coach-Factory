@@ -8,9 +8,17 @@ FAQS = [
                   "payments, orders, returns, and accounts. What would you like to know?"
     },
     {
-        'keywords': ['shipping', 'delivery', 'deliver', 'how long', 'arrive'],
-        'answer': "We offer FREE shipping on orders over $200. Orders under $200 "
-                  "have a flat $15 shipping fee. Delivery usually takes 5-10 business days."
+        'keywords': ['first order', 'first purchase', 'first time', 'new customer',
+                     'first delivery'],
+        'answer': "Your first order ships FREE, no matter the total. After that, shipping "
+                  "is free on orders over $200, otherwise a flat $15 applies."
+    },
+    {
+        'keywords': ['shipping', 'delivery', 'deliver', 'how long', 'arrive',
+                     'free shipping', 'ship'],
+        'answer': "Shipping is FREE on your first order. After that, orders over $200 ship "
+                  "free, and orders under $200 have a flat $15 fee. Delivery usually takes "
+                  "5-10 business days."
     },
     {
         'keywords': ['payment', 'pay', 'bitcoin', 'btc', 'crypto', 'wallet'],
@@ -35,8 +43,13 @@ FAQS = [
                   "Click 'Receipt' next to the order to view or print it."
     },
     {
+        'keywords': ['quantity', 'how many', 'multiple', 'more than one'],
+        'answer': "You can choose how many of each bag you want in your bag or at checkout. "
+                  "The total updates automatically as you change the quantity."
+    },
+    {
         'keywords': ['return', 'refund', 'exchange', 'send back'],
-        'answer': "We offer 30-day hassle-free returns. Contact support@coachfactory.com "
+        'answer': "We offer 30-day hassle-free returns. Contact coachfactory360@gmail.com "
                   "with your order number to start a return."
     },
     {
@@ -60,19 +73,20 @@ FAQS = [
                   "open your bag and click CHECKOUT WITH BITCOIN."
     },
     {
-        'keywords': ['contact', 'email', 'phone', 'support', 'human', 'agent', 'help'],
-        'answer': "You can reach our team at support@coachfactory.com or +1 800 555 0199, "
-                  "Monday to Friday, 9am to 6pm."
+        'keywords': ['contact', 'email', 'phone', 'support', 'human', 'agent', 'help',
+                     'whatsapp', 'tiktok'],
+        'answer': "You can reach us at coachfactory360@gmail.com, WhatsApp +1 (636) 427-8021, "
+                  "or on TikTok at @coach_factory."
     },
     {
         'keywords': ['price', 'cost', 'how much', 'discount', 'sale'],
-        'answer': "Prices are listed on each product page. Shipping is free on orders "
-                  "over $200, otherwise $15 applies."
+        'answer': "Prices are listed on each product page. Your first order ships free. "
+                  "After that, shipping is free on orders over $200, otherwise $15 applies."
     },
 ]
 
 FALLBACK = ("I'm not sure about that one. Try asking about shipping, payments, "
-            "orders, returns, or accounts — or contact support@coachfactory.com "
+            "orders, returns, or accounts, or contact coachfactory360@gmail.com "
             "for personal help.")
 
 
