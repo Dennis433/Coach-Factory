@@ -11,6 +11,8 @@ ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'coachfactory2026'
 BTC_ADDRESS = 'bc1qervr0scl6gpzf2sdenquazuw087s6h7f97hfz5'
 
+CATEGORIES = ['Shoulder Bags', 'Totes', 'Crossbody', 'Mini Bags']
+
 # Keep the full photo: pad to a square with the site's background colour
 UPLOAD_TRANSFORMATION = [
     {'width': 1000, 'height': 1000, 'crop': 'pad', 'background': 'rgb:f0ede8'}
@@ -68,14 +70,14 @@ def index():
 
 @main.route('/products')
 def products():
-    category = request.args.get('category', 'All')
-    if category == 'All':
-        all_products = Product.query.all()
-    else:
-        all_products = Product.query.filter_by(category=category).all()
-    categories = ['All', 'Shoulder Bags', 'Totes', 'Crossbody', 'Mini Bags']
-    return render_template('products.html', products=all_products,
-                           categories=categories, active=category)
+    category = request.args.get('category')
+    # No category chosen (or an unknown one): show the category picker only
+    if category not in CATEGORIES:
+        return render_template('products.html', products=None,
+                               categories=CATEGORIES, active=None)
+    items = Product.query.filter_by(category=category).all()
+    return render_template('products.html', products=items,
+                           categories=CATEGORIES, active=category)
 
 @main.route('/product/<int:product_id>')
 def product_detail(product_id):
